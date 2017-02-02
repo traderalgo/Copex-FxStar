@@ -3,7 +3,7 @@ Forex, cTrader, cAlgo, mysql
 
 ##
 Archiwizacja pozycji z platformy cTrader, cAlgo do bazy danych Mysql
--- otwarte pozycje
--- zamkniete pozycje
--- OHLC dla pary walutowej
--- zapis salda konta
+* otwarte pozycje
+* zamkniete pozycje
+* OHLC dla pary walutowej
+* zapis salda konta
