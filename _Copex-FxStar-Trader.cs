@@ -396,4 +396,5 @@ CREATE TABLE IF NOT EXISTS `EURUSD` (
   `reglow` float(10,6) DEFAULT '0',
   UNIQUE KEY `time` (`time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 */
