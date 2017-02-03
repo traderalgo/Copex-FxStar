@@ -30,7 +30,7 @@ namespace cAlgo
         [Parameter(DefaultValue = 9975139)]
         public int CopyAccountID { get; set; }
 
-        [Parameter(DefaultValue = 1, MinValue = 0.1, MaxValue = 5)]
+        [Parameter(DefaultValue = 1, MinValue = 0.1, MaxValue = 10)]
         public double Multiply { get; set; }
 
         [Parameter(DefaultValue = "root")]
@@ -111,7 +111,7 @@ namespace cAlgo
 
 
 
-        public bool CreateFile(string fileName = "1234567890")
+        public bool CreateFile(string fileName = "0")
         {
             string path1 = "";
             path1 = path + "\\" + fileName + ".POS";
@@ -137,7 +137,9 @@ namespace cAlgo
         //Select statement
         public List<string>[] SelectOpenPositions()
         {
-            string query = "SELECT * FROM opensignal";
+            Int32 TimeStamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
+            string query = "SELECT * FROM opensignal where time >= NOW() - INTERVAL 2 HOUR";
 
             //Create a list to store the result
             List<string>[] list = new List<string>[9];
@@ -238,11 +240,11 @@ namespace cAlgo
         //Select statement
         public List<string>[] SelectClosePositions()
         {
-            string query = "SELECT * FROM closesignal ORDER BY id DESC LIMIT 21";
+            string query = "SELECT * FROM closesignal ORDER BY id DESC LIMIT 100";
 
             //Create a list to store the result
             List<string>[] list = new List<string>[9];
-            string[][] arr = new string[22][];
+            string[][] arr = new string[101][];
             for (int x = 0; x < arr.Length; x++)
             {
                 arr[x] = new string[8];
@@ -293,9 +295,8 @@ namespace cAlgo
     // RUN WEB BROWSER with my web page
     ProcessStartInfo psi = new ProcessStartInfo();
     psi.FileName = "IExplore.exe";
-    psi.Arguments = "forex.fxstar.eu";            
+    psi.Arguments = "fxstar.eu";            
     Process.Start(psi);
 Arrays :
 https://msdn.microsoft.com/en-us/library/aa288453%28v=vs.71%29.aspx
-
 */
