@@ -1,4 +1,4 @@
-# Copex-FxStar cTrader/cAlgo positions copier
+# Copex-FxStar cTrader/cAlgo positions copier ver. 1.0
 Allow copy positions from trader account to multiple clients accouns with multipy positions volume.
 
 ## _Copex-FxStar-Trader
