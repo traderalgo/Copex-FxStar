@@ -24,14 +24,20 @@ namespace cAlgo
     [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.Internet | AccessRights.FileSystem | AccessRights.FullAccess)]
     public class FxStarEu_Client : Robot
     {
-        [Parameter(DefaultValue = 3)]
+        [Parameter(DefaultValue = 1)]
         public int TimerSeconds { get; set; }
 
         [Parameter(DefaultValue = 9975139)]
         public int CopyAccountID { get; set; }
 
-        [Parameter(DefaultValue = 1, MinValue = 0.1, MaxValue = 10)]
+        [Parameter(DefaultValue = 1, MinValue = 0.1, MaxValue = 100)]
         public double Multiply { get; set; }
+
+        [Parameter(DefaultValue = 0, MinValue = 0)]
+        public int StopLossPips { get; set; }
+
+        [Parameter(DefaultValue = 0, MinValue = 0)]
+        public int TakeProfitPips { get; set; }
 
         [Parameter(DefaultValue = "root")]
         public string User { get; set; }
@@ -42,6 +48,7 @@ namespace cAlgo
         [Parameter(DefaultValue = "localhost")]
         public string ServerHost { get; set; }
 
+        // cBot folder for opened position list
         public string path;
 
         // Mysql Connection variables
@@ -134,6 +141,28 @@ namespace cAlgo
         }
 
 
+        public bool DeleteFile(string fileName = "0")
+        {
+            string path1 = "";
+            path1 = path + "\\" + fileName + ".POS";
+            if (System.IO.File.Exists(path1))
+            {
+                try
+                {
+                    System.IO.File.Delete(path1);
+                } catch (DirectoryNotFoundException e)
+                {
+                    Print(e);
+                }
+                return false;
+            }
+            else
+            {
+                //Print("Position file \"{0}\" already exists. Don't copy.", fileName);
+                return true;
+            }
+        }
+
         //Select statement
         public List<string>[] SelectOpenPositions()
         {
@@ -185,15 +214,67 @@ namespace cAlgo
                     if (arr[nr][3] == "BUY")
                     {
                         double vol = Int32.Parse(arr[nr][2].ToString()) * Multiply;
-                        ExecuteMarketOrder(TradeType.Buy, sym, (Int32)vol, (string)dataReader["id"] + "-CopexFxStar");
-                        Print("=========> BUY Marker Order Open " + dataReader["id"] + " " + dataReader["symbol"] + " " + vol + " " + dataReader["type"]);
+                        var result = ExecuteMarketOrder(TradeType.Buy, sym, (Int32)vol, (string)dataReader["id"] + "-CopexFxStar");
+                        if (result.IsSuccessful)
+                        {
+                            Print("=========> BUY Marker Order Open " + dataReader["id"] + " " + dataReader["symbol"] + " " + vol + " " + dataReader["type"]);
+                            // Add StopLossPips for position
+                            if (StopLossPips > 10)
+                            {
+                                var position = result.Position;
+                                Print("Position SL price is {0}", position.StopLoss);
+                                var stopLoss = position.EntryPrice - StopLossPips * Symbol.PipSize;
+                                ModifyPosition(position, stopLoss, position.TakeProfit);
+                                Print("New Position {1} SL price is {0}", position.StopLoss, position.Id);
+                            }
+                            // Add TakeProfitPips for position
+                            if (TakeProfitPips > 10)
+                            {
+                                var position = result.Position;
+                                Print("Position TP price is {0}", position.TakeProfit);
+                                var takeProfit = position.EntryPrice + TakeProfitPips * Symbol.PipSize;
+                                ModifyPosition(position, position.StopLoss, takeProfit);
+                                Print("New Position {1} TP price is {0}", position.TakeProfit, position.Id);
+                            }
+                        }
+                        // if open position error delete position file
+                        if (!result.IsSuccessful)
+                        {
+                            DeleteFile("" + dataReader["id"]);
+                        }
                     }
 
                     if (arr[nr][3] == "SELL")
                     {
                         double vol = Int32.Parse(arr[nr][2].ToString()) * Multiply;
-                        ExecuteMarketOrder(TradeType.Sell, sym, (Int32)vol, (string)dataReader["id"] + "-CopexFxStar");
-                        Print("=========> SELL Marker Order Open " + dataReader["id"] + " " + dataReader["symbol"] + " " + vol + " " + dataReader["type"]);
+                        var result = ExecuteMarketOrder(TradeType.Sell, sym, (Int32)vol, (string)dataReader["id"] + "-CopexFxStar");
+                        if (result.IsSuccessful)
+                        {
+                            Print("=========> SELL Marker Order Open " + dataReader["id"] + " " + dataReader["symbol"] + " " + vol + " " + dataReader["type"]);
+                            // Add StopLossPips for position
+                            if (StopLossPips > 10)
+                            {
+                                var position = result.Position;
+                                Print("Position SL price is {0}", position.StopLoss);
+                                var stopLoss = position.EntryPrice + StopLossPips * Symbol.PipSize;
+                                ModifyPosition(position, stopLoss, position.TakeProfit);
+                                Print("New Position {1} SL price is {0}", position.StopLoss, position.Id);
+                            }
+                            // Add TakeProfitPips for position
+                            if (TakeProfitPips > 10)
+                            {
+                                var position = result.Position;
+                                Print("Position TP price is {0}", position.TakeProfit);
+                                var takeProfit = position.EntryPrice - TakeProfitPips * Symbol.PipSize;
+                                ModifyPosition(position, position.StopLoss, takeProfit);
+                                Print("New Position {1} TP price is {0}", position.TakeProfit, position.Id);
+                            }
+                        }
+                        // if open position error delete position file
+                        if (!result.IsSuccessful)
+                        {
+                            DeleteFile("" + dataReader["id"]);
+                        }
                     }
 
                 }
@@ -292,6 +373,9 @@ namespace cAlgo
 }
 
 /*
+    // directory files
+    string[] picList = Directory.GetFiles(sourceDir, "*.jpg");
+    
     // RUN WEB BROWSER with my web page
     ProcessStartInfo psi = new ProcessStartInfo();
     psi.FileName = "IExplore.exe";
