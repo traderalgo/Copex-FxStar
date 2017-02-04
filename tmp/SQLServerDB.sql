@@ -1,4 +1,4 @@
-
+-- Copex-Fxstar sql server
 CREATE DATABASE breakermind;
 
 USE breakermind;
@@ -30,10 +30,10 @@ CREATE TABLE CloseSignal (
 
 CREATE TABLE GBPJPY (
   time int NOT NULL UNIQUE,
-  popen decimal(10,6) DEFAULT '0',
-  pclose decimal(10,6) DEFAULT '0',
-  low decimal(10,6) DEFAULT '0',
-  high decimal(10,6) DEFAULT '0',
+  sopen decimal(10,6) DEFAULT '0',
+  sclose decimal(10,6) DEFAULT '0',
+  slow decimal(10,6) DEFAULT '0',
+  shigh decimal(10,6) DEFAULT '0',
   reg decimal(10,6) DEFAULT '0',
   reghigh decimal(10,6) DEFAULT '0',  
   reglow decimal(10,6) DEFAULT '0',
