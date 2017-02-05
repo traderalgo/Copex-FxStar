@@ -11,3 +11,4 @@ Client - copy signals from Trader accounts. Allow multipy positions volume.
 * cTrader or cAlgo platform
 * Mysql database server https://dev.mysql.com/downloads/installer/
 * Mysql Connector/.Net https://dev.mysql.com/downloads/connector/net/6.9.html
+ 
