@@ -146,9 +146,9 @@ namespace cAlgo
             } catch (Exception ee)
             {
                 Print(ee);
+                // close connection
+                connection.Close();
             }
-            // close connection
-            connection.Close();
             // Print time
             Print("Timer loop (UTC) " + DateTime.UtcNow.ToString("h:mm:ss tt"));
         }
