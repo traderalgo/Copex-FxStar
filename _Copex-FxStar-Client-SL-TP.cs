@@ -25,37 +25,40 @@ namespace cAlgo
     [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.Internet | AccessRights.FileSystem | AccessRights.FullAccess)]
     public class FxStarEu_Client : Robot
     {
-        [Parameter(DefaultValue = 1)]
+        [Parameter("Timer seconds", DefaultValue = 1)]
         public int TimerSeconds { get; set; }
 
-        [Parameter(DefaultValue = 300, MinValue = 1, MaxValue = 1000)]
+        [Parameter("Delay milliseconds", DefaultValue = 300, MinValue = 1, MaxValue = 1000)]
         public int DelayMillisecond { get; set; }
 
-        [Parameter(DefaultValue = 9975139)]
+        [Parameter("Copy AccountID", DefaultValue = 9975139)]
         public int CopyAccountID { get; set; }
 
-        [Parameter(DefaultValue = 1, MinValue = 0.1, MaxValue = 100)]
+        [Parameter("Multiply Volume", DefaultValue = 1, MinValue = 0.1, MaxValue = 100)]
         public double Multiply { get; set; }
 
-        [Parameter(DefaultValue = 0, MinValue = 0)]
+        [Parameter("Stop Loss Pips", DefaultValue = 0, MinValue = 0)]
         public int StopLossPips { get; set; }
 
-        [Parameter(DefaultValue = 0, MinValue = 0)]
+        [Parameter("Take Profit Pips", DefaultValue = 0, MinValue = 0)]
         public int TakeProfitPips { get; set; }
 
-        [Parameter("Equity SL", DefaultValue = 100, MinValue = 1)]
+        [Parameter("Equity StopLoss", DefaultValue = 0, MinValue = 1)]
         public int EquityStopLoss { get; set; }
 
-        [Parameter(DefaultValue = 500, MinValue = 100)]
+        [Parameter("Max Positions", DefaultValue = 500, MinValue = 100)]
         public int MaxPositions { get; set; }
 
-        [Parameter(DefaultValue = "root")]
+        [Parameter("Max Hours Back", DefaultValue = 6, MinValue = 1)]
+        public int LastHours { get; set; }
+
+        [Parameter("FX Username", DefaultValue = "root")]
         public string User { get; set; }
 
-        [Parameter(DefaultValue = "toor")]
+        [Parameter("FX Password", DefaultValue = "toor")]
         public string Password { get; set; }
 
-        [Parameter(DefaultValue = "localhost")]
+        [Parameter("FX Hostname or IP", DefaultValue = "localhost")]
         public string ServerHost { get; set; }
 
         // cBot folder for opened position list
@@ -206,7 +209,7 @@ namespace cAlgo
         {
             Int32 TimeStamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
-            string query = "SELECT * FROM opensignal where time >= NOW() - INTERVAL 6 HOUR ORDER BY id DESC LIMIT " + MaxPositions;
+            string query = "SELECT * FROM opensignal where time >= NOW() - INTERVAL " + LastHours + " HOUR ORDER BY id DESC LIMIT " + MaxPositions;
 
             //Create a list to store the result
             List<string>[] list = new List<string>[9];
@@ -317,7 +320,7 @@ namespace cAlgo
         //Select statement
         public List<string>[] SelectClosePositions()
         {
-            string query = "SELECT * FROM closesignal where time >= NOW() - INTERVAL 6 HOUR ORDER BY id DESC LIMIT " + MaxPositions;
+            string query = "SELECT * FROM closesignal where time >= NOW() - INTERVAL " + LastHours + " HOUR ORDER BY id DESC LIMIT " + MaxPositions;
 
             //Create a list to store the result
             List<string>[] list = new List<string>[9];
