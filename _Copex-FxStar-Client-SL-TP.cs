@@ -43,6 +43,9 @@ namespace cAlgo
         [Parameter(DefaultValue = 0, MinValue = 0)]
         public int TakeProfitPips { get; set; }
 
+        [Parameter("Equity SL", DefaultValue = 100, MinValue = 1)]
+        public int EquityStopLoss { get; set; }
+
         [Parameter(DefaultValue = 500, MinValue = 100)]
         public int MaxPositions { get; set; }
 
@@ -123,6 +126,9 @@ namespace cAlgo
 
                 // Close positions signals
                 SelectClosePositions();
+
+                // Equity stop loss and stop cBot
+                EquityStop(EquityStopLoss);
 
                 // Delay thread
                 Thread.Sleep(DelayMillisecond);
@@ -350,12 +356,60 @@ namespace cAlgo
             return list;
         }
 
+
+        //=========================================================================
+        // equity stop loss - money stoploss
+        public void EquityStop(double StopEquity = 0, bool StopCbot = true)
+        {
+            ChartObjects.DrawText("Equity/StopLossEquity", "Equity: " + Account.Equity.ToString() + " / StopLossEquity: " + StopEquity, StaticPosition.BottomRight, Colors.Yellow);
+            // account equity lower than StopEquity
+            while (Account.Equity < StopEquity && Positions.Count > 0)
+            {
+                if (StopCbot)
+                {
+                    CloseAllPositionsStop();
+                }
+                else
+                {
+                    CloseAllPositions();
+                }
+            }
+            Print("Equity StopLoss !!!");
+        }
+
+        public void CloseAllPositionsStop()
+        {
+            foreach (var position in Positions)
+            {
+                if (position != null)
+                {
+                    ClosePosition(position);
+                }
+                if (Positions.Count == 0)
+                {
+                    Stop();
+                }
+            }
+        }
+
+        public void CloseAllPositions()
+        {
+            foreach (var position in Positions)
+            {
+                if (position != null)
+                {
+                    ClosePosition(position);
+                }
+            }
+        }
+        //=========================================================================        
+
     }
 }
 
 /*
     // directory files
     string[] picList = Directory.GetFiles(sourceDir, "*.jpg");
-    Arrays :
-    https://msdn.microsoft.com/en-us/library/aa288453%28v=vs.71%29.aspx
+Arrays :
+https://msdn.microsoft.com/en-us/library/aa288453%28v=vs.71%29.aspx
 */
