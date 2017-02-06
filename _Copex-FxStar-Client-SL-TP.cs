@@ -245,6 +245,12 @@ namespace cAlgo
                     if (arr[nr][3] == "BUY")
                     {
                         double vol = Int32.Parse(arr[nr][2].ToString()) * Multiply;
+
+                        if ((Int32)vol < sym.VolumeMin || (Int32)vol > sym.VolumeMax)
+                        {
+                            Print("ERROR Position volume " + (string)dataReader["id"] + "CopexFxStar" + " " + sym);
+                        }
+
                         var result = ExecuteMarketOrder(TradeType.Buy, sym, (Int32)vol, (string)dataReader["id"] + "CopexFxStar");
                         if (result.IsSuccessful)
                         {
@@ -278,6 +284,12 @@ namespace cAlgo
                     if (arr[nr][3] == "SELL")
                     {
                         double vol = Int32.Parse(arr[nr][2].ToString()) * Multiply;
+
+                        if ((Int32)vol < sym.VolumeMin || (Int32)vol > sym.VolumeMax)
+                        {
+                            Print("ERROR Position volume " + (string)dataReader["id"] + "CopexFxStar" + " " + sym);
+                        }
+
                         var result = ExecuteMarketOrder(TradeType.Sell, sym, (Int32)vol, (string)dataReader["id"] + "CopexFxStar");
                         if (result.IsSuccessful)
                         {
@@ -377,7 +389,8 @@ namespace cAlgo
                     CloseAllPositions();
                 }
                 Print("Equity StopLoss !!!");
-            }            
+            }
+
         }
 
         public void CloseAllPositionsStop()
