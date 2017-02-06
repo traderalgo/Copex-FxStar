@@ -172,7 +172,7 @@ namespace cAlgo
 
             //Create a list to store the result
             List<string>[] list = new List<string>[9];
-            string[][] arr = new string[20][];
+            string[][] arr = new string[5000][];
             for (int x = 0; x < arr.Length; x++)
             {
                 arr[x] = new string[8];
@@ -321,11 +321,11 @@ namespace cAlgo
         //Select statement
         public List<string>[] SelectClosePositions()
         {
-            string query = "SELECT * FROM closesignal ORDER BY id DESC LIMIT 100";
+            string query = "SELECT * FROM closesignal ORDER BY id DESC LIMIT 200";
 
             //Create a list to store the result
             List<string>[] list = new List<string>[9];
-            string[][] arr = new string[101][];
+            string[][] arr = new string[500][];
             for (int x = 0; x < arr.Length; x++)
             {
                 arr[x] = new string[8];
