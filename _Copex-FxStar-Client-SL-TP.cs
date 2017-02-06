@@ -376,8 +376,8 @@ namespace cAlgo
                 {
                     CloseAllPositions();
                 }
-            }
-            Print("Equity StopLoss !!!");
+                Print("Equity StopLoss !!!");
+            }            
         }
 
         public void CloseAllPositionsStop()
