@@ -121,29 +121,34 @@ namespace cAlgo
 
             }
 
-            // Loop in one second interval 1s / DelayMillisecond (1-1000) = position refresh time (milliseconds)
-            while (true)
+            try
             {
-                // Copy open positions signals
-                SelectOpenPositions();
+                // Loop in one second interval 1s / DelayMillisecond (1-1000) = position refresh time (milliseconds)
+                while (true)
+                {
+                    // Copy open positions signals
+                    SelectOpenPositions();
 
-                // Close positions signals
-                SelectClosePositions();
+                    // Close positions signals
+                    SelectClosePositions();
 
-                // Equity stop loss and stop cBot
-                EquityStop(EquityStopLoss);
+                    // Equity stop loss and stop cBot
+                    EquityStop(EquityStopLoss);
 
-                // Delay thread
-                Thread.Sleep(DelayMillisecond);
+                    // Delay thread
+                    Thread.Sleep(DelayMillisecond);
 
-                double sleep1 = sleep - Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString());
-                Print("Position update loop (delay) : " + sleep1);
-                sleep = Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString());
+                    double sleep1 = sleep - Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString());
+                    Print("Position update loop (delay) : " + sleep1);
+                    sleep = Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString());
+                }
+
+            } catch (Exception ee)
+            {
+                Print(ee);
             }
-
             // close connection
             connection.Close();
-
             // Print time
             Print("Timer loop (UTC) " + DateTime.UtcNow.ToString("h:mm:ss tt"));
         }
