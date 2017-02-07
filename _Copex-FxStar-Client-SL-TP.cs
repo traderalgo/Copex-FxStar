@@ -138,9 +138,10 @@ namespace cAlgo
                     // Delay thread
                     Thread.Sleep(DelayMillisecond);
 
-                    double sleep1 = sleep - Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString());
-                    Print("Position update loop (delay) : " + sleep1);
-                    sleep = Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString());
+                    // double sleep1 = sleep - Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString());
+                    double sleep1 = sleep - Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+                    Print("Position update loop delay (second) : " + Math.Round(sleep1, 3));
+                    sleep = Convert.ToDouble(DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond.ToString(), System.Globalization.CultureInfo.InvariantCulture);
                 }
 
             } catch (Exception ee)
